@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>🐉 Alchemisten-Gilde: Questlog für Andal (Level 30) 🧪</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  body {
+    background-color: #000080;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"><text x="10" y="30" font-size="20">🥨</text></svg>');
+    background-attachment: fixed; /* Massive performance boost: renders background to a separate GPU layer once */
+    color: #FFF;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 900px;
+    margin: 15px auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 4px ridge #FF00FF;
+    padding: 15px;
+    box-shadow: 6px 6px 0px #FFFF00;
+  }
+
+  h1, h2, h3 {
+    color: #FFFF00;
+    text-shadow: 2px 2px #FF0000;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .blink { animation: blinker 0.8s linear infinite; }
+  @keyframes blinker { 50% { opacity: 0; } }
+
+  /* Optimized Marquee */
+  .marquee-container {
+    border: 3px dashed #00FFFF;
+    margin-bottom: 20px;
+    background: #000;
+    padding: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+  .marquee-inner {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 12s linear infinite;
+    will-change: transform;
+  }
+  @keyframes marquee {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+  }
+
+  .btn {
+    background: #FF00FF;
+    color: #FFF;
+    border: 4px outset #FFF;
+    font-size: 1em;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    margin: 10px;
+    box-shadow: 3px 3px 0 #000;
+    touch-action: manipulation;
+  }
+  .btn:active { border-style: inset; transform: translate(2px, 2px); box-shadow: 1px 1px 0 #000; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .gb-box {
+    background: #FFFFFF;
+    border: 4px solid #000;
+    border-radius: 8px;
+    color: #000;
+    padding: 15px;
+    box-shadow: 3px 3px 0 #555;
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.5;
+    text-align: left;
+    margin-bottom: 15px;
+  }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .quest-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 4px solid #000;
+    margin: 10px;
+  }
+  .circle-img {
+    border-radius: 50%;
+  }
+
+  /* Optimized shake */
+  .shake-anim {
+    animation: shake 0.5s infinite;
+    will-change: transform;
+  }
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+
+  @keyframes idle-breathe {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes confuse-wobble {
+    0% { transform: rotate(0deg) translateX(0); filter: hue-rotate(0deg); }
+    25% { transform: rotate(-5deg) translateX(-4px); filter: hue-rotate(90deg); }
+    50% { transform: rotate(0deg) translateX(0); filter: hue-rotate(180deg); }
+    75% { transform: rotate(5deg) translateX(4px); filter: hue-rotate(270deg); }
+    100% { transform: rotate(0deg) translateX(0); filter: hue-rotate(360deg); }
+  }
+  .confused-anim { animation: confuse-wobble 1.5s ease-in-out infinite !important; }
+
+  /* Minigame Hunt Styles - Optimized */
+  .hunt-target {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #000;
+    object-fit: cover;
+    background: #FFF;
+    cursor: crosshair;
+    will-change: transform, opacity;
+    transition: transform 2.5s linear, opacity 0.2s;
+    box-shadow: 2px 2px 0 #000;
+    touch-action: manipulation;
+  }
+
+  /* Battle Arena Styles */
+  .battle-arena {
+    position: relative;
+    background: #A3D8F4;
+    height: 350px;
+    border: 4px solid #000;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    margin-top: 15px;
+    transform: translateZ(0); /* Hardware acceleration */
+  }
+
+  .platform-enemy {
+    position: absolute;
+    top: 150px;
+    right: 5%;
+    width: 200px;
+    height: 60px;
+    background: #80C080;
+    border-radius: 50%;
+    border: 3px solid #408040;
+    z-index: 1;
+  }
+  .platform-player {
+    position: absolute;
+    width: 200px;
+    height: 60px;
+    background: #008000;
+    border: 4px solid #000;
+    border-radius: 50%;
+    bottom: 20px;
+    left: 5%;
+    z-index: 1;
+    box-shadow: inset -10px -10px 0px rgba(0,0,0,0.3);
+  }
+
+  .sprite-enemy {
+    position: absolute;
+    top: 20px;
+    right: 10%;
+    width: 140px;
+    height: 140px;
+    z-index: 2;
+    border-radius: 8px;
+    will-change: transform, filter;
+  }
+  .sprite-player {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    bottom: 30px;
+    left: 5%;
+    z-index: 5;
+    border-radius: 8px;
+    border: 3px solid #000;
+    animation: idle-breathe 2s ease-in-out infinite;
+  }
+
+  .hp-box {
+    background: #FFFFEA;
+    border: 3px solid #000;
+    border-radius: 8px 0 8px 0;
+    padding: 10px;
+    position: absolute;
+    z-index: 5;
+    box-shadow: 2px 2px 0 #555;
+    color: #000;
+    text-align: left;
+    font-size: 0.7em;
+  }
+  .hp-box h3 {
+    margin: 0 0 8px 0;
+    color: #000;
+    text-shadow: none;
+    font-size: 1.1em;
+  }
+  .hp-box-enemy { top: 15px; left: 5%; width: 200px; }
+  .hp-box-player { bottom: 15px; right: 5%; width: 220px; }
+  
+  .hp-bar-bg {
+    background: #555;
+    border: 2px solid #000;
+    height: 15px;
+    width: 100%;
+    border-radius: 8px;
+    position: relative;
+  }
+  .hp-label {
+    position: absolute;
+    left: -30px;
+    top: 1px;
+    color: #DDA010;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .hp-bar-fill {
+    background: #00FF00;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    transition: width 0.3s, background-color 0.3s;
+  }
+
+  .battle-ui {
+    display: flex;
+    background: #FFF;
+    border: 4px solid #000;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    height: 140px;
+  }
+  .dialog-box {
+    flex: 2;
+    padding: 15px;
+    color: #000;
+    font-size: 0.9em;
+    line-height: 1.5;
+    text-align: left;
+    border-right: 4px solid #000;
+  }
+  .action-menu {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 8px;
+    background: #FFF;
+  }
+  .action-btn {
+    background: transparent;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.6em;
+    padding: 10px;
+    color: #000;
+    touch-action: manipulation;
+  }
+  .action-btn:active { background: #EEE; }
+  .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .quest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  .quest-card {
+    border: 3px dotted #FFFF00;
+    background: #222;
+    padding: 10px;
+  }
+
+  .q-container { display: none; min-height: 150px; }
+  .q-container.active { display: block; }
+
+  /* Verhindert das Springen der Textboxen beim Tippen */
+  #lab-text { min-height: 80px; display: flex; align-items: center; }
+  #hunt-text { min-height: 40px; }
+  #pre-battle-text { min-height: 120px; }
+  #post-battle-text { min-height: 150px; }
+  #result-title { min-height: 80px; }
+
+  .ans-btn {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    background: #000;
+    color: #FFF;
+    border: 3px solid #FFF;
+    border-radius: 8px;
+    text-align: center;
+    padding: 15px;
+    display: none;
+    touch-action: manipulation;
+  }
+
+  /* --- MOBILE RESPONSIVENESS --- */
+  @media (max-width: 768px) {
+    .container { width: 95%; padding: 10px; margin: 10px auto; }
+    /* Remove text shadows on mobile as they are incredibly heavy for pixel fonts */
+    h1, h2, h3, .hp-label, .hunt-target { text-shadow: none !important; }
+    
+    /* Remove box-shadows and complex borders on mobile to save GPU fill rate */
+    .container, .btn, .gb-box, .hp-box, .hunt-target { box-shadow: none !important; }
+    .btn { border: 2px solid #FFF !important; }
+    .container { border: 2px solid #FF00FF !important; }
+    
+    .quest-img { width: 100px; height: 100px; }
+    
+    #hunting-ground { height: 280px !important; }
+    .hunt-target { width: 50px; height: 50px; }
+    #hunt-start-overlay button { font-size: 1em !important; }
+    
+    .battle-arena { height: 220px; }
+    .hp-box { padding: 4px; width: 120px; font-size: 0.5em; }
+    .hp-box-enemy { top: 5px; left: 5px; }
+    .hp-box-player { bottom: 5px; right: 5px; }
+    .hp-box h3 { font-size: 1em; margin-bottom: 4px; }
+    .hp-bar-bg { height: 10px; }
+    .hp-label { font-size: 0.8em; left: -22px; top: 0px; }
+    
+    .platform-enemy { width: 120px; height: 35px; top: 90px; right: 2%; }
+    .sprite-enemy { width: 80px; height: 80px; top: 15px; right: 5%; }
+    
+    .platform-player { width: 140px; height: 45px; bottom: 15px; left: 2%; }
+    .sprite-player { width: 100px; height: 100px; bottom: 20px; left: 5%; }
+    
+    .battle-ui { flex-direction: column; height: auto; }
+    /* Festes Height verhindert teure Layout-Reflows beim Tippen */
+    .dialog-box { border-right: none; border-bottom: 3px solid #000; padding: 10px; font-size: 0.75em; height: 85px; overflow: hidden; }
+    .action-menu { grid-template-columns: 1fr 1fr; padding: 5px; gap: 4px; }
+    .action-btn { font-size: 0.6em; padding: 12px 2px; text-align: center; }
+    
+    .quest-grid { grid-template-columns: 1fr; }
+    .ans-btn { font-size: 0.7em; padding: 12px; }
+    
+    #lab-text { min-height: 60px; }
+    #pre-battle-text { min-height: 140px; }
+    #post-battle-text { min-height: 160px; }
+  }
+
+  /* Anti-Spam-Click Lock for Quest Grid */
+  .grid-active {
+    display: block !important;
+    animation: unlockGrid 3s forwards;
+  }
+  @keyframes unlockGrid {
+    0% { opacity: 0; pointer-events: none; }
+    85% { opacity: 0; pointer-events: none; }
+    100% { opacity: 1; pointer-events: auto; }
+  }
+</style>
+<script>
+  // Optimized Audio Pool to prevent mobile lag
+  let isMusicPlaying = false;
+  const audioPool = {};
+  const soundList = ['click', 'hit', 'error', 'success', 'bottle-open', 'groan', 'snore', 'heal', 'shoot'];
+
+  function initAudio() {
+    if (!isMusicPlaying) {
+      let bgm = document.getElementById("bgMusic");
+      bgm.volume = 0.5;
+      bgm.play().catch(e => console.log(e));
+      isMusicPlaying = true;
+      
+      // Init pool
+      soundList.forEach(s => {
+        audioPool[s] = [];
+        for(let i=0; i<3; i++) {
+          let a = new Audio('audio/' + s + '.wav');
+          a.preload = 'auto';
+          audioPool[s].push(a);
+        }
+      });
+    }
+  }
+
+  function playBGM(filename) {
+    let bgm = document.getElementById("bgMusic");
+    bgm.src = "audio/" + filename;
+    bgm.load();
+    bgm.volume = 0.5;
+    bgm.play().catch(e => console.log(e));
+  }
+
+  function playSound(type) {
+    initAudio();
+    let pool = audioPool[type];
+    if(pool) {
+      for(let i=0; i<pool.length; i++) {
+        if(pool[i].paused || pool[i].ended) {
+          pool[i].currentTime = 0;
+          pool[i].play().catch(e=>{});
+          return;
+        }
+      }
+      pool[0].currentTime = 0;
+      pool[0].play().catch(e=>{});
+    }
+  }
+
+  // --- PRO RPG DIALOG SYSTEM ---
+  let isTyping = false;
+  let typeState = {
+    active: false,
+    textChunks: [],
+    chunkIndex: 0,
+    charIndex: 0,
+    element: null,
+    timer: null,
+    callback: null,
+    isTypingChunk: false
+  };
+
+  function typeWriter(text, elementId, speed, callback) {
+    if (typeState.active) {
+      document.removeEventListener('click', handleDialogClick);
+      clearTimeout(typeState.timer);
+    }
+
+    isTyping = true;
+    typeState.active = true;
+    typeState.textChunks = text.match(/[^.!?]+[.!?]*\s*/g) || [text];
+    typeState.chunkIndex = 0;
+    typeState.charIndex = 0;
+    typeState.element = document.getElementById(elementId);
+    typeState.callback = callback;
+    typeState.isTypingChunk = false;
+    
+    setTimeout(() => {
+      document.addEventListener('click', handleDialogClick);
+    }, 50);
+
+    startChunk();
+  }
+
+  function startChunk() {
+    if (typeState.chunkIndex >= typeState.textChunks.length) {
+      isTyping = false;
+      typeState.active = false;
+      document.removeEventListener('click', handleDialogClick);
+      if (typeState.callback) typeState.callback();
+      return;
+    }
+
+    typeState.charIndex = 0;
+    typeState.isTypingChunk = true;
+    typeState.element.textContent = "";
+    typeNextChar();
+  }
+
+  function typeNextChar() {
+    let chunk = typeState.textChunks[typeState.chunkIndex];
+    if (typeState.charIndex < chunk.length) {
+      typeState.element.textContent += chunk.charAt(typeState.charIndex);
+      // Play sound less frequently to avoid audio glitches & lower CPU load
+      if (typeState.charIndex % 4 === 0) playSound('click');
+      typeState.charIndex++;
+      typeState.timer = setTimeout(typeNextChar, 35); // Slightly slower to ensure smooth 30fps rendering on weak CPUs
+    } else {
+      finishChunk();
+    }
+  }
+
+  function finishChunk() {
+    clearTimeout(typeState.timer);
+    typeState.isTypingChunk = false;
+    let chunk = typeState.textChunks[typeState.chunkIndex].trim();
+    typeState.element.innerHTML = chunk + '<span id="dialog-arrow" class="blink" style="color:#FF00FF; font-weight:bold; margin-left:10px; font-size:0.8em;">▼ (Klick)</span>';
+  }
+
+  function handleDialogClick(e) {
+    if (!typeState.active) return;
+    
+    if (typeState.isTypingChunk) {
+      finishChunk();
+    } else {
+      playSound('click');
+      typeState.chunkIndex++;
+      
+      if (typeState.chunkIndex >= typeState.textChunks.length) {
+        // Dialog ist komplett beendet
+        isTyping = false;
+        typeState.active = false;
+        document.removeEventListener('click', handleDialogClick);
+        
+        // Klick-Pfeil entfernen, aber den Text stehen lassen!
+        let arrow = document.getElementById('dialog-arrow');
+        if (arrow) arrow.remove();
+        
+        if (typeState.callback) typeState.callback();
+      } else {
+        startChunk();
+      }
+    }
+  }
+
+  function typeLog(text, callback) {
+    typeWriter(text, 'dialog-text', 25, callback);
+  }
+
+  function nextStep(current, next) {
+    playSound('success');
+    document.getElementById('step' + current).classList.remove('active');
+    document.getElementById('step' + next).classList.add('active');
+  }
+
+  // --- STATION 1: Chemie-Labor ---
+  let currentQ = 1;
+  const questions = {
+    1: "Frage 1: Welche Zutat fehlt im Meistertrank?",
+    2: "Frage 2: Bei welcher Temperatur siedet das legendäre Weißbier?",
+    3: "Frage 3: Welcher Katalysator beschleunigt den Abbau von Kater?"
+  };
+
+  function showQuestion(qNum) {
+    document.querySelectorAll('.q-container').forEach(c => c.classList.remove('active'));
+    let container = document.getElementById('q' + qNum);
+    container.classList.add('active');
+    
+    let buttons = container.querySelectorAll('.ans-btn');
+    buttons.forEach(b => b.style.display = 'none');
+    
+    typeWriter(questions[qNum], 'q' + qNum + '-text', 40, () => {
+      buttons.forEach(b => b.style.display = 'block');
+    });
+  }
+
+  function answerQ(questionNumber, isCorrect) {
+    if (isTyping) return;
+    
+    if (isCorrect) {
+      playSound('success');
+      currentQ++;
+      if (document.getElementById('q' + currentQ)) {
+        showQuestion(currentQ);
+      } else {
+        document.getElementById('q' + questionNumber).classList.remove('active');
+        typeWriter("🌟 Perfekte Mischung! Aber ab 30 braucht man mehr als nur Tränke... Beweise deine Reflexe und sammle wichtige Gegenstände für das Alter ein! (10 Items in 15 Sekunden)", 'lab-text', 40, () => {
+          setTimeout(() => {
+            nextStep(1, '1-5');
+            typeWriter("Sammle Aspirin, Kaffee und Co.!", 'hunt-text', 40, () => {
+              document.getElementById('hunting-ground').style.display = 'block';
+            });
+          }, 1500);
+        });
+      }
+    } else {
+      playSound('error');
+      typeWriter("FALSCH! Die Mischung blubbert gefährlich...", 'lab-text', 40);
+    }
+  }
+
+  function startQuest() {
+    initAudio();
+    playSound('click');
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('step1').classList.add('active');
+    
+    typeWriter("Willkommen Andal! Dein 30. Geburtstag steht an. Für ein so hohes Alter musst du unbedingt beweisen, dass du noch fit für zukünftige Abenteuer bist. Beginnen wir mit der ersten Prüfung!", 'lab-text', 40, () => {
+      setTimeout(() => showQuestion(1), 500);
+    });
+  }
+
+  // --- STATION 1.5: Freundes-Jagd ---
+  let huntScore = 0;
+  let huntTime = 15;
+  let huntInterval;
+  let huntTimer;
+  let huntActive = false;
+  
+  // DOM Pooling for Hunt Targets
+  const MAX_TARGETS = 5;
+  const targetPool = [];
+  const u30Symbols = ['💊', '☕', '🧦', '👓', '🛏️'];
+  
+  function initHuntPool() {
+    let ground = document.getElementById('hunting-ground');
+    for(let i=0; i<MAX_TARGETS; i++) {
+      let div = document.createElement('div');
+      div.className = "hunt-target";
+      div.style.display = 'none';
+      div.style.left = '0px';
+      div.style.top = '0px';
+      div.style.fontSize = '30px'; // Size for emojis
+      div.style.alignItems = 'center';
+      div.style.justifyContent = 'center';
+      
+      div.onclick = function() {
+        if (!huntActive || this.style.opacity === '0') return;
+        playSound('shoot');
+        huntScore++;
+        document.getElementById('hunt-score').innerText = huntScore;
+        this.style.pointerEvents = 'none';
+        this.style.opacity = '0';
+      };
+      
+      ground.appendChild(div);
+      targetPool.push(div);
+    }
+  }
+  
+  function getFreeTarget() {
+    return targetPool.find(img => img.style.display === 'none');
+  }
+  
+  function startHunt() {
+    playSound('click');
+    document.getElementById('hunt-start-overlay').style.display = 'none';
+    huntScore = 0;
+    huntTime = 15;
+    document.getElementById('hunt-score').innerText = huntScore;
+    document.getElementById('hunt-time').innerText = huntTime;
+    huntActive = true;
+    
+    if (targetPool.length === 0) initHuntPool();
+    
+    huntInterval = setInterval(spawnFriend, 700);
+    huntTimer = setInterval(() => {
+      huntTime--;
+      document.getElementById('hunt-time').innerText = huntTime;
+      if (huntTime <= 0) endHunt();
+    }, 1000);
+  }
+  
+  function spawnFriend() {
+    if (!huntActive) return;
+    
+    let el = getFreeTarget();
+    if (!el) return; // Pool empty, skip spawn
+    
+    let ground = document.getElementById('hunting-ground');
+    
+    // Zufälliges Symbol aus der Ü30-Liste wählen
+    let sym = u30Symbols[Math.floor(Math.random() * u30Symbols.length)];
+    el.innerHTML = sym;
+    
+    let startY = Math.random() * (ground.offsetHeight - 60);
+    let startX = Math.random() > 0.5 ? -80 : ground.offsetWidth + 10;
+    let endX = startX < 0 ? ground.offsetWidth + 10 : -80;
+    
+    // Reset properties
+    el.style.transition = 'none';
+    el.style.transform = `translate3d(${startX}px, ${startY}px, 0)`;
+    el.style.opacity = '1';
+    el.style.pointerEvents = 'auto';
+    el.style.display = 'flex'; // Use flex to center emojis
+    
+    // Trigger reflow
+    el.getBoundingClientRect();
+    
+    // Animate
+    el.style.transition = 'transform 2.5s linear, opacity 0.2s';
+    el.style.transform = `translate3d(${endX}px, ${startY}px, 0)`;
+    
+    // Recycle after animation
+    setTimeout(() => {
+      if (huntActive) el.style.display = 'none';
+    }, 2500); 
+  }
+  
+  fn = function() {}; // placeholder if needed
+  function endHunt() {
+    huntActive = false;
+    clearInterval(huntInterval);
+    clearInterval(huntTimer);
+    
+    targetPool.forEach(img => img.style.display = 'none');
+    
+    let overlay = document.getElementById('hunt-start-overlay');
+    overlay.style.display = 'flex';
+    
+    if (huntScore >= 10) {
+      playSound('success');
+      overlay.innerHTML = `
+        <div style="text-align:center;">
+          <h2 style="color:#00FF00; margin-bottom:10px;">GESCHAFFT!</h2>
+          <button class="btn" onclick="nextStep('1-5', '1-75'); initPreBattle();">WEITER</button>
+        </div>`;
+    } else {
+      playSound('error');
+      overlay.innerHTML = `
+        <div style="text-align:center;">
+          <h2 style="color:#FF0000; margin-bottom:10px;">VERFEHLT!</h2>
+          <button class="btn" onclick="startHunt()">NOCHMAL</button>
+        </div>`;
+    }
+  }
+
+  // --- STATION 1.75: Pre-Battle Dialog ---
+  function initPreBattle() {
+    typeWriter("Die Vorräte sind gesichert! Doch auf dem Weg zur Party raschelt es im Gebüsch... Eine riesige WILDE ZUSAU versperrt dir den Weg zur Feier! Mach dich kampfbereit!", "pre-battle-text", 40, () => {
+      document.getElementById("btn-start-battle").style.display = "inline-block";
+    });
+  }
+
+  function startBattle() {
+    nextStep('1-75', 2);
+    playBGM('battle.mp3');
+    typeLog("Eine WILDE ZUSAU greift an!");
+  }
+
+  // --- STATION 2: Pokemon Battle ---
+  let enemyHP = 100;
+  let playerHP = 100;
+  let enemyIsAsleep = 0;
+  let isConfused = false;
+
+  function getHpColor(percentage) {
+    if (percentage > 50) return '#00FF00';
+    if (percentage > 20) return '#FFFF00';
+    return '#FF0000';
+  }
+
+  function updateBars() {
+    let ePct = Math.max(0, enemyHP);
+    let pPct = Math.max(0, playerHP);
+    document.getElementById('enemy-hp').style.width = ePct + '%';
+    document.getElementById('enemy-hp').style.background = getHpColor(ePct);
+    document.getElementById('enemy-hp-text').innerText = ePct + '/100 HP';
+    
+    document.getElementById('player-hp').style.width = pPct + '%';
+    document.getElementById('player-hp').style.background = getHpColor(pPct);
+    document.getElementById('player-hp-text').innerText = pPct + '/100 HP';
+    
+    let statusText = "";
+    if (enemyIsAsleep > 0) statusText += "SCHLÄFT ";
+    let statusEl = document.getElementById('enemy-status');
+    if (statusEl) statusEl.innerText = statusText;
+  }
+
+  function flashEnemy() {
+    let img = document.getElementById('enemy-img');
+    img.style.filter = "invert(1) brightness(2)";
+    setTimeout(() => { img.style.filter = "none"; }, 150);
+  }
+
+  function shakeScreen() {
+    let arena = document.querySelector('.battle-arena');
+    if (arena) {
+      arena.classList.add('shake-anim');
+      setTimeout(() => arena.classList.remove('shake-anim'), 400);
+    }
+  }
+
+  function showDamageNumber(targetX, targetY, amount, isPlayer, isHeal = false) {
+    let arena = document.querySelector('.battle-arena');
+    let dmgText = document.createElement('div');
+    if (isHeal) {
+      dmgText.innerHTML = "+" + amount;
+      dmgText.style.color = '#00FF00';
+    } else {
+      dmgText.innerHTML = amount > 0 ? "-" + amount : "Zzz";
+      dmgText.style.color = isPlayer ? '#FF0000' : (amount > 0 ? '#FFFF00' : '#FFF');
+    }
+    dmgText.style.position = 'absolute';
+    dmgText.style.left = targetX;
+    dmgText.style.top = targetY;
+    dmgText.style.fontSize = amount > 0 ? '3rem' : '2rem'; 
+    dmgText.style.textShadow = '3px 3px 0 #000';
+    dmgText.style.zIndex = '20';
+    dmgText.style.willChange = 'transform, opacity';
+    dmgText.style.transition = 'transform 1.5s ease-out, opacity 1.5s ease-out';
+    arena.appendChild(dmgText);
+    
+    dmgText.getBoundingClientRect(); // reflow
+    dmgText.style.transform = 'translate3d(0, -60px, 0)';
+    dmgText.style.opacity = '0';
+    
+    setTimeout(() => { if(dmgText.parentNode) dmgText.remove(); }, 1500);
+  }
+
+  function animateMug(callback) {
+    let arena = document.querySelector('.battle-arena');
+    let mug = document.createElement('div');
+    mug.innerHTML = '🍺';
+    mug.style.position = 'absolute';
+    mug.style.left = '25%'; 
+    mug.style.bottom = '20%';
+    mug.style.fontSize = '4rem'; 
+    mug.style.willChange = 'transform';
+    mug.style.transition = 'transform 0.5s ease-in';
+    mug.style.zIndex = '10';
+    arena.appendChild(mug);
+    
+    mug.getBoundingClientRect();
+    mug.style.transform = 'translate3d(150px, -150px, 0) rotate(360deg) scale(1.5)';
+    
+    setTimeout(() => {
+      if(mug.parentNode) mug.remove();
+      callback();
+    }, 500);
+  }
+
+  function animateBottle(callback) {
+    let arena = document.querySelector('.battle-arena');
+    let container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '25%'; 
+    container.style.bottom = '20%';
+    container.style.zIndex = '10';
+    
+    let bottle = document.createElement('div');
+    bottle.innerHTML = `<div style="font-size:4rem;">🍾</div>`; // Emoji fallback for performance
+    bottle.style.transition = 'transform 0.5s ease';
+    bottle.style.willChange = 'transform';
+    
+    container.appendChild(bottle);
+    arena.appendChild(container);
+    
+    playSound('bottle-open');
+    container.getBoundingClientRect();
+    
+    setTimeout(() => {
+      bottle.style.transform = 'rotate(-80deg) translate3d(-30px, 20px, 0)';
+    }, 50);
+    
+    setTimeout(() => {
+      if(container.parentNode) container.remove();
+      callback();
+    }, 1000); 
+  }
+
+  function animateSleep(callback) {
+    let img = document.getElementById('enemy-img');
+    img.style.transition = 'transform 1s ease';
+    img.style.transform = 'rotate(90deg)';
+    showDamageNumber('75%', '30%', 0, false);
+    setTimeout(callback, 1200);
+  }
+
+  function animateHeal(callback) {
+    let arena = document.querySelector('.battle-arena');
+    for(let i=0; i<3; i++) {
+      setTimeout(() => {
+        let plus = document.createElement('div');
+        plus.innerHTML = '➕';
+        plus.style.position = 'absolute';
+        plus.style.left = (20 + Math.random()*20) + '%'; 
+        plus.style.bottom = (20 + Math.random()*20) + '%';
+        plus.style.fontSize = '2rem';
+        plus.style.color = '#00FF00';
+        plus.style.willChange = 'transform, opacity';
+        plus.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
+        plus.style.zIndex = '15';
+        arena.appendChild(plus);
+        
+        plus.getBoundingClientRect();
+        plus.style.transform = 'translate3d(0, -50px, 0)';
+        plus.style.opacity = '0';
+        
+        setTimeout(() => { if(plus.parentNode) plus.remove(); }, 1000);
+      }, i * 150);
+    }
+    playSound('heal');
+    setTimeout(callback, 1000);
+  }
+
+  function setButtonsDisabled(disabled) {
+    let btns = document.querySelectorAll('.action-btn');
+    btns.forEach(b => b.disabled = disabled);
+  }
+
+  function enemyTurn() {
+    if (enemyHP <= 0 || playerHP <= 0) return;
+    
+    if (enemyIsAsleep > 0) {
+      enemyIsAsleep--;
+      playSound('snore');
+      showDamageNumber('75%', '30%', 0, false); 
+      typeLog("Die WILDE ZUSAU schläft tief...", () => {
+        isActionBlocked = false;
+        setButtonsDisabled(false);
+      });
+      return; 
+    }
+    
+    let img = document.getElementById('enemy-img');
+    if (img.style.transform === 'rotate(90deg)') {
+      img.style.transform = 'rotate(0deg)';
+      typeLog("Die WILDE ZUSAU ist aufgewacht!", () => {
+        executeEnemyAttack();
+      });
+    } else {
+      executeEnemyAttack();
+    }
+  }
+
+  function executeEnemyAttack() {
+    typeLog("WILDE ZUSAU setzt KATER ein!", () => {
+      let dmg = Math.floor(Math.random() * 15) + 10;
+      playerHP -= dmg;
+      playSound('groan'); 
+      playSound('hit');
+      showDamageNumber('20%', '50%', dmg, true); 
+      updateBars();
+      shakeScreen();
+      
+      if (!checkWin() && playerHP > 0) {
+        isActionBlocked = false;
+        setButtonsDisabled(false);
+        typeLog("Was soll ANDAL tun?");
+      } else if (playerHP <= 0) {
+        typeLog("Du wurdest besiegt... Lade die Seite neu, um es nochmal zu probieren!");
+      }
+    });
+  }
+
+  function attack(type) {
+    // isTyping blockiert nicht länger, Klick auf Attacke überschreibt Text!
+    if (playerHP <= 0 || enemyHP <= 0 || isActionBlocked) return;
+    
+    isActionBlocked = true;
+    setButtonsDisabled(true);
+
+    if (isConfused && Math.random() < 0.4 && type !== 'konter') {
+      typeLog("ANDAL ist verwirrt und verletzt sich!", () => {
+        playSound('error');
+        playerHP -= 10;
+        updateBars();
+        showDamageNumber('20%', '50%', 10, true);
+        enemyTurn(); // No delay
+      });
+      return;
+    }
+    
+    if (type === 'trinken') {
+      typeLog("ANDAL setzt BIERTRINKEN ein!", () => {
+        animateBottle(() => {
+          let dmg = Math.floor(Math.random() * 30) + 20;
+          enemyHP -= dmg;
+          playSound('hit');
+          showDamageNumber('75%', '40%', dmg, false);
+          isConfused = true;
+          document.getElementById('player-img').classList.add('confused-anim');
+          flashEnemy();
+          updateBars();
+          
+          if (!checkWin()) {
+            typeLog("ANDAL ist verwirrt!", () => { enemyTurn(); });
+          }
+        });
+      });
+    } else if (type === 'werfen') {
+      typeLog("ANDAL setzt MASSKRUG ein!", () => {
+        animateMug(() => {
+          let dmg = Math.floor(Math.random() * 20) + 15;
+          enemyHP -= dmg;
+          playSound('hit');
+          showDamageNumber('75%', '40%', dmg, false); 
+          flashEnemy();
+          updateBars();
+          if (!checkWin()) enemyTurn();
+        });
+      });
+    } else if (type === 'zwoelf') {
+      typeLog("ANDAL setzt 12 UHR 30 ein!", () => {
+        playSound('snore');
+        animateSleep(() => {
+          enemyIsAsleep = 2; 
+          typeLog("WILDE ZUSAU schläft ein!", () => { enemyTurn(); });
+        });
+      });
+    } else if (type === 'konter') {
+      typeLog("ANDAL setzt KONTERHALBE ein!", () => {
+        animateHeal(() => {
+          playerHP += 30;
+          if(playerHP > 100) playerHP = 100;
+          isConfused = false;
+          document.getElementById('player-img').classList.remove('confused-anim');
+          showDamageNumber('20%', '50%', 30, true, true);
+          updateBars();
+          if (!checkWin()) enemyTurn();
+        });
+      });
+    }
+  }
+
+  function checkWin() {
+    if (enemyHP <= 0) {
+      playBGM('Victory.mp3');
+      playSound('success');
+      typeLog("WILDE ZUSAU besiegt! 3000 EXP.", () => {
+        nextStep(2, 3);
+        initPostBattle();
+      });
+      return true;
+    }
+    if (playerHP <= 0) {
+      playSound('error');
+      typeLog("ANDAL hat einen Filmriss...", () => {});
+      return true;
+    }
+    return false;
+  }
+
+  // --- STATION 3: Questauswahl ---
+  function initPostBattle() {
+    typeWriter("Die Wilde Zusau ist besiegt! Du hast es geschafft und kommst erschöpft, aber siegreich auf deiner 30er-Feier an. Deine Freunde jubeln dir zu! Wähle nun dein wohlverdientes Geschenk:", "post-battle-text", 40, () => {
+      let grid = document.getElementById("quest-grid-container");
+      grid.classList.add('grid-active'); // Triggert die 3-Sekunden Sperre
+    });
+  }
+
+  function selectQuest(questName) {
+    if (isTyping) return;
+    playSound('success');
+    document.getElementById('quest-grid-container').style.display = 'none';
+    document.getElementById('quest-result').style.display = 'block';
+    typeWriter('🎉 GLÜCKWUNSCH! Du hast "' + questName + '" gewählt!', 'result-title', 40, () => {});
+  }
+
+  // --- QUEST INFO MODAL ---
+  let selectedQuest = "";
+
+  function showQuestInfo(questName) {
+    if (isTyping) return;
+    playSound('click');
+    selectedQuest = questName;
+    
+    let desc = "";
+    if (questName === 'Radtour (Altmühltal)') {
+      desc = `<strong>A sportliche und gmiatliche Tour durch oans von de scheensten Täler in Bayern.</strong><br><br>
+              <strong>Route:</strong> Schee an da Altmühl entlang, vorbei an mords Felsn und oidn Ritterburgen.<br>
+              <strong>Aktivitäten:</strong> Gscheid Radln, abends a gscheids Lagerfeuer, Grilln und Zeltn unterm Sternenhimmel.<br>
+              <strong>Voraussetzung:</strong> A bisserl a Schmalz in de Wadln und ned aus Zucker sei.<br><br>
+              <span style="font-size:0.8em; color:#005500;">Fokus: Natur & Puste | Anstrengung: Gscheid bis Mittel</span>`;
+    }
+    else if (questName === 'Kletterwald (Brombachsee)') {
+      desc = `<strong>Adrenalin und Gschicklichkeit hoch in de Bam mit am scheena Blick aufn See.</strong><br><br>
+              <strong>Action:</strong> Verschiedene Parcours mit Seilbahnen und wackelige Brücken. Da konnst dei ganze Körperspannung vom Turnen amoi richtig zoagn!<br>
+              <strong>Entspannung:</strong> Danach am Sandstrand vom Brombachsee flackn und a Rundn schwimma.<br>
+              <strong>Voraussetzung:</strong> Schwindelfrei muasst hoid sei.<br><br>
+              <span style="font-size:0.8em; color:#005500;">Fokus: Action & Gschicklichkeit | Anstrengung: Mittel</span>`;
+    }
+    else if (questName === 'Budweis (Tschechien)') {
+      desc = `<strong>A gschmackiger Ausflug nach Tschechien, wo as echte Budweiser herkimmt.</strong><br><br>
+              <strong>Programm:</strong> A gscheide Brauereiführung. Da konnst ois Master in Chemie ganz genau schaung, was de da chemisch zsammsudern.<br>
+              <strong>Genuss:</strong> Gscheids Bier probiern und a deftigs Gulasch mit Knödl essn.<br>
+              <strong>Komfort:</strong> Gschmeidig in am Hotel direkt in Budweis schlafa.<br><br>
+              <span style="font-size:0.8em; color:#005500;">Fokus: Gmiatlichkeit & Kultur | Anstrengung: Fast nix</span>`;
+    }
+    else if (questName === 'Feuerwehr-Turnen') {
+      desc = `<strong>Da absolute Wahnsinn für Körper und Geist.</strong><br><br>
+              <strong>Disziplin 1:</strong> Bodenturnen und a paar Übungen am Reck – aber in da vollen, schwarn Atemschutzausrüstung von da Feierwehr!<br>
+              <strong>Disziplin 2:</strong> Direkt nachm Salto rückwärts geht's ans Titrieren von chemischen Pufferlösungen, natürlich blind.<br>
+              <strong>Hinweis:</strong> Nimmt eh koana, aber etz stehts hoid amoi drauf.<br><br>
+              <span style="font-size:0.8em; color:#AA0000;">Fokus: Völliga Wahnsinn | Anstrengung: Lebnsgefährlich</span>`;
+    }
+
+    document.getElementById('quest-modal-title').innerText = questName;
+    document.getElementById('quest-modal-desc').innerHTML = desc;
+    document.getElementById('quest-modal').style.display = 'flex';
+  }
+
+  function closeQuestModal() {
+    playSound('click');
+    document.getElementById('quest-modal').style.display = 'none';
+  }
+
+  function confirmQuest() {
+    closeQuestModal();
+    selectQuest(selectedQuest);
+  }
+
+  // --- DEBUG SHORTCUTS ---
+  function debugJump(target) {
+    initAudio();
+    // Reset state um Bugs beim Springen zu verhindern
+    isTyping = false;
+    isActionBlocked = false;
+    typeState.active = false;
+    
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('start-screen').classList.remove('active');
+    
+    if (target === 'moorhuhn') {
+      document.getElementById('step1-5').classList.add('active');
+      typeWriter("DEBUG: Moorhuhn Jagd gestartet.", 'hunt-text', 40, () => {
+        document.getElementById('hunting-ground').style.display = 'block';
+      });
+    } else if (target === 'kampf') {
+      document.getElementById('step2').classList.add('active');
+      playBGM('battle.mp3');
+      typeLog("Eine WILDE ZUSAU greift an!");
+    } else if (target === 'ende') {
+      document.getElementById('step3').classList.add('active');
+      enemyHP = 0; // Fix state
+      playBGM('Victory.mp3');
+      initPostBattle();
+    }
+  }
+</script>
+</head>
+<body>
+
+<audio id="bgMusic" loop src="audio/musik.mp3"></audio>
+
+<div class="marquee-container">
+  <div class="marquee-inner">
+    <h1 class="blink" style="margin:0;">🔥 WÄHLE DEINE QUEST, LEVEL 30 ALCHEMIST ANDAL! 🔥</h1>
+  </div>
+</div>
+
+<div class="container">
+  <div id="start-screen" style="display: block;">
+    <div class="gb-box">
+      <h2 style="text-align: center; color: #000; text-shadow:none;">Bist du bereit?</h2>
+      <p style="text-align: center; font-size: 0.8em;">Drücke Start, um das Level 30 Abenteuer zu beginnen.</p>
+    </div>
+    <button class="btn" onclick="startQuest()" style="font-size: 1.2em; padding: 20px;">▶ START</button>
+    
+    <!-- Debug Shortcuts -->
+    <div style="margin-top: 40px; border: 2px dashed #FFF; padding: 10px;">
+      <p style="font-size: 0.7em; margin-bottom: 10px; color: #FFF; text-shadow:none;">DEBUG SHORTCUTS:</p>
+      <div style="display: flex; gap: 5px; justify-content: center;">
+        <button class="btn" style="font-size: 0.6em; padding: 8px;" onclick="debugJump('moorhuhn')">Moorhuhn</button>
+        <button class="btn" style="font-size: 0.6em; padding: 8px;" onclick="debugJump('kampf')">Kampf</button>
+        <button class="btn" style="font-size: 0.6em; padding: 8px;" onclick="debugJump('ende')">Ende</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="step1" class="step">
+    <!-- Bild außerhalb der Textbox -->
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img src="images/questgeber.JPEG" class="circle-img" alt="Questgeber" style="width: 130px; height: 130px; object-fit: cover; border-radius: 50%; border: 4px solid #FFF; background: #ccc;">
+    </div>
+    
+    <div class="gb-box">
+      <p id="lab-text" style="font-size: 0.9em; margin: 0;"></p>
+    </div>
+    
+    <div style="background: rgba(0,0,0,0.8); padding: 15px; border: 4px solid #0F0; border-radius: 8px;">
+      <div id="q1" class="q-container">
+        <h3 id="q1-text" style="text-transform:none;"></h3>
+        <button class="btn ans-btn" onclick="answerQ(1, false)">A) Spüli</button>
+        <button class="btn ans-btn" onclick="answerQ(1, true)">B) Natronlauge</button>
+        <button class="btn ans-btn" onclick="answerQ(1, false)">C) Essig</button>
+      </div>
+      <div id="q2" class="q-container">
+        <h3 id="q2-text" style="text-transform:none;"></h3>
+        <button class="btn ans-btn" onclick="answerQ(2, true)">A) 78 °C</button>
+        <button class="btn ans-btn" onclick="answerQ(2, false)">B) 100 °C</button>
+        <button class="btn ans-btn" onclick="answerQ(2, false)">C) Kühlschrank</button>
+      </div>
+      <div id="q3" class="q-container">
+        <h3 id="q3-text" style="text-transform:none;"></h3>
+        <button class="btn ans-btn" onclick="answerQ(3, false)">A) Mehr Bier</button>
+        <button class="btn ans-btn" onclick="answerQ(3, false)">B) Aspirin</button>
+        <button class="btn ans-btn" onclick="answerQ(3, true)">C) Weißwurstfrühstück</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="step1-5" class="step">
+    <div class="gb-box">
+      <p id="hunt-text" style="font-size: 0.9em; margin:0;"></p>
+    </div>
+    <div id="hunting-ground" style="position:relative; width: 100%; height: 350px; background: #87CEEB; border: 4px solid #000; border-radius: 8px; overflow: hidden; display: none;">
+      <div style="position:absolute; top: 10px; left: 10px; color: #000; z-index: 10; font-size: 1.2em; text-shadow: 2px 2px #FFF;">SCORE: <span id="hunt-score">0</span>/10</div>
+      <div style="position:absolute; top: 10px; right: 10px; color: #FF0000; z-index: 10; font-size: 1.2em; text-shadow: 2px 2px #000;">TIME: <span id="hunt-time">15</span></div>
+      <div id="hunt-start-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; z-index: 20;">
+         <button class="btn" onclick="startHunt()" style="font-size:1.2em;">▶ JAGD STARTEN</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="step1-75" class="step">
+    <div class="gb-box">
+      <h2 style="color: #000; text-shadow:none; text-align: center;">ACHTUNG!</h2>
+      <p id="pre-battle-text" style="font-size: 1em; line-height: 1.6; margin-top: 20px;"></p>
+    </div>
+    <div style="text-align: center;">
+      <button id="btn-start-battle" class="btn" style="display:none; font-size: 1.2em;" onclick="startBattle()">⚔️ KAMPF STARTEN</button>
+    </div>
+  </div>
+
+  <div id="step2" class="step">
+    <div class="battle-arena">
+      <div class="hp-box hp-box-enemy">
+        <h3>WILDE ZUSAU</h3>
+        <div class="hp-bar-bg"><span class="hp-label">HP</span><div class="hp-bar-fill" id="enemy-hp"></div></div>
+        <div id="enemy-hp-text" style="font-size: 0.6em; text-align: right; margin-top: 4px;">100/100 HP</div>
+        <div id="enemy-status" style="font-size: 0.6em; text-align: right; color: #FF00FF; margin-top: 2px;"></div>
+      </div>
+      <div class="platform-enemy"></div>
+      <img src="images/gegner.JPG" id="enemy-img" class="sprite-enemy shake-anim" alt="Zusau">
+      
+      <div class="hp-box hp-box-player">
+        <h3>ANDAL Lv30</h3>
+        <div class="hp-bar-bg"><span class="hp-label">HP</span><div class="hp-bar-fill" id="player-hp"></div></div>
+        <div id="player-hp-text" style="font-size: 0.6em; text-align: right; margin-top: 4px;">100/100 HP</div>
+      </div>
+      <div class="platform-player"></div>
+      <img src="images/andal.JPG" id="player-img" class="sprite-player" alt="Andal">
+    </div>
+    <div class="battle-ui">
+      <div class="dialog-box" id="dialog-text"></div>
+      <div class="action-menu">
+        <button id="btn-trinken" class="action-btn" onclick="attack('trinken')">Biertrinken<br><span style="font-size:0.8em">(Stark)</span></button>
+        <button id="btn-werfen" class="action-btn" onclick="attack('werfen')">Maßkrug werfen<br><span style="font-size:0.8em">(Normal)</span></button>
+        <button id="btn-konter" class="action-btn" onclick="attack('konter')">Konterhalbe<br><span style="font-size:0.8em">(Heilung)</span></button>
+        <button id="btn-zwoelf" class="action-btn" onclick="attack('zwoelf')">12 Uhr 30<br><span style="font-size:0.8em">(Schlaf)</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="step3" class="step">
+    <div class="gb-box">
+      <h2 style="color: #000; text-shadow:none; text-align: center;">🏆 PARTY ERREICHT! 🏆</h2>
+      <p id="post-battle-text" style="font-size: 1em; line-height: 1.6; margin-top: 20px;"></p>
+    </div>
+    
+    <div id="quest-grid-container" style="display: none;">
+      <div class="quest-grid">
+        <div class="gb-box" style="margin-bottom:0; cursor:pointer;" onclick="showQuestInfo('Radtour (Altmühltal)')">
+          <h3 style="color:#000; text-shadow:none; font-size:0.9em;">🚲 Waldläufer</h3>
+        </div>
+        <div class="gb-box" style="margin-bottom:0; cursor:pointer;" onclick="showQuestInfo('Kletterwald (Brombachsee)')">
+          <h3 style="color:#000; text-shadow:none; font-size:0.9em;">🧗 Druidenprüfung</h3>
+        </div>
+        <div class="gb-box" style="margin-bottom:0; cursor:pointer;" onclick="showQuestInfo('Budweis (Tschechien)')">
+          <h3 style="color:#000; text-shadow:none; font-size:0.9em;">🍻 Gelehrten-Taverne</h3>
+        </div>
+        <div class="gb-box" style="margin-bottom:0; cursor:pointer;" onclick="showQuestInfo('Feuerwehr-Turnen')">
+          <h3 style="color:#000; text-shadow:none; font-size:0.9em;">🧪 Artificer-Wahnsinn</h3>
+        </div>
+      </div>
+    </div>
+    
+    <div id="quest-result" style="display:none;" class="gb-box">
+       <h3 style="color:#000; text-shadow:none; line-height:1.5; font-size:0.9em;" id="result-title"></h3>
+    </div>
+
+    <!-- Quest Info Modal -->
+    <div id="quest-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:100; justify-content:center; align-items:center; padding: 20px;">
+      <div class="gb-box" style="max-width: 100%; width: 400px; text-align: center;">
+        <h3 id="quest-modal-title" style="color:#000; text-shadow:none; margin-top:0;"></h3>
+        <p id="quest-modal-desc" style="color:#000; font-size:0.9em; line-height: 1.5; margin: 20px 0;"></p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn" onclick="confirmQuest()" style="font-size: 0.8em; padding: 10px;">✅ WÄHLEN</button>
+          <button class="btn" onclick="closeQuestModal()" style="font-size: 0.8em; padding: 10px;">❌ ZURÜCK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
