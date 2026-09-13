@@ -386,7 +386,7 @@
   // Optimized Audio Pool to prevent mobile lag
   let isMusicPlaying = false;
   const audioPool = {};
-  const soundList = ['click', 'hit', 'error', 'success', 'bottle-open', 'groan', 'snore', 'heal', 'shoot'];
+  const soundList = ['click', 'hit', 'generic_hit', 'error', 'success', 'bottle-open', 'groan', 'snore', 'heal', 'shoot'];
 
   function initAudio() {
     if (!isMusicPlaying) {
@@ -399,7 +399,7 @@
       soundList.forEach(s => {
         audioPool[s] = [];
         for(let i=0; i<3; i++) {
-          let a = new Audio('audio/' + s + '.wav');
+          let a = new Audio('audio/' + s + '.wav?v=' + Date.now());
           a.preload = 'auto';
           audioPool[s].push(a);
         }
@@ -540,9 +540,9 @@
   // --- STATION 1: Chemie-Labor ---
   let currentQ = 1;
   const questions = {
-    1: "Frage 1: Welche Zutat fehlt im Meistertrank?",
-    2: "Frage 2: Bei welcher Temperatur siedet das legendäre Weißbier?",
-    3: "Frage 3: Welcher Katalysator beschleunigt den Abbau von Kater?"
+    1: "Frage 1: Was ist die wichtigste Basis für jedes gute Labor-Experiment?",
+    2: "Frage 2: Bei welcher Temperatur fängt die legendäre Flüssigkeit im Weißbier an zu sieden?",
+    3: "Frage 3: Wie nennt man die Reaktion, wenn man am nächsten Morgen aufwacht?"
   };
 
   function showQuestion(qNum) {
@@ -589,7 +589,7 @@
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('step1').classList.add('active');
     
-    typeWriter("Willkommen Andal! Dein 30. Geburtstag steht an. Für ein so hohes Alter musst du unbedingt beweisen, dass du noch fit für zukünftige Abenteuer bist. Beginnen wir mit der ersten Prüfung!", 'lab-text', 40, () => {
+    typeWriter("Willkommen Andal! Dein 30. Geburtstag steht an. Auf dem Weg zu deiner Geburtstagsparty und dem ultimativen Geschenk musst du 3 Prüfungen für zukünftige Abenteurer bestehen. Prüfung 1: Um auch mit 30 noch zu bestehen, braucht es manchmal besondere Tränke. Zum Glück bist du Chemiker und kannst drei Fragen beantworten, um das ultimative Weißbier zu brauen.", 'lab-text', 40, () => {
       setTimeout(() => showQuestion(1), 500);
     });
   }
@@ -737,6 +737,7 @@
   let playerHP = 100;
   let enemyIsAsleep = 0;
   let isConfused = false;
+  let isActionBlocked = false;
 
   function getHpColor(percentage) {
     if (percentage > 50) return '#00FF00';
@@ -923,7 +924,7 @@
       let dmg = Math.floor(Math.random() * 15) + 10;
       playerHP -= dmg;
       playSound('groan'); 
-      playSound('hit');
+      playSound('generic_hit');
       showDamageNumber('20%', '50%', dmg, true); 
       updateBars();
       shakeScreen();
@@ -961,7 +962,7 @@
         animateBottle(() => {
           let dmg = Math.floor(Math.random() * 30) + 20;
           enemyHP -= dmg;
-          playSound('hit');
+          playSound('generic_hit');
           showDamageNumber('75%', '40%', dmg, false);
           isConfused = true;
           document.getElementById('player-img').classList.add('confused-anim');
@@ -1199,6 +1200,9 @@
   </div>
 
   <div id="step1-75" class="step">
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img src="images/questgeber.JPEG" class="circle-img" alt="Questgeber" style="width: 130px; height: 130px; object-fit: cover; border-radius: 50%; border: 4px solid #FFF; background: #ccc;">
+    </div>
     <div class="gb-box">
       <h2 style="color: #000; text-shadow:none; text-align: center;">ACHTUNG!</h2>
       <p id="pre-battle-text" style="font-size: 1em; line-height: 1.6; margin-top: 20px;"></p>
@@ -1239,6 +1243,9 @@
   </div>
 
   <div id="step3" class="step">
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img src="images/questgeber.JPEG" class="circle-img" alt="Questgeber" style="width: 130px; height: 130px; object-fit: cover; border-radius: 50%; border: 4px solid #FFF; background: #ccc;">
+    </div>
     <div class="gb-box">
       <h2 style="color: #000; text-shadow:none; text-align: center;">🏆 PARTY ERREICHT! 🏆</h2>
       <p id="post-battle-text" style="font-size: 1em; line-height: 1.6; margin-top: 20px;"></p>
