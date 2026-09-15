@@ -452,7 +452,8 @@
 
     isTyping = true;
     typeState.active = true;
-    typeState.textChunks = text.match(/[^.!?]+[.!?]*\s*/g) || [text];
+    // Split by sentence, but don't split if the period is preceded by a digit (e.g. "30.")
+    typeState.textChunks = text.match(/(?:\d\.|[^.!?])+[.!?]*\s*/g) || [text];
     typeState.chunkIndex = 0;
     typeState.charIndex = 0;
     typeState.element = document.getElementById(elementId);
@@ -540,10 +541,24 @@
   // --- STATION 1: Chemie-Labor ---
   let currentQ = 1;
   const questions = {
-    1: "Frage 1: Was ist die wichtigste Basis für jedes gute Labor-Experiment?",
+    1: "Frage 1: Welcher der folgenden Schnäpse kommt in ausreichenden Mengen an Feldmochinger Bächen vor?",
     2: "Frage 2: Bei welcher Temperatur fängt die legendäre Flüssigkeit im Weißbier an zu sieden?",
-    3: "Frage 3: Wie nennt man die Reaktion, wenn man am nächsten Morgen aufwacht?"
+    3: "Frage 3: An welcher Adriaküste erlebten wir unseren ersten Vollrausch?"
   };
+
+  const wrongQuotes = [
+    "FALSCH! Hast du schon wieder heimlich genascht?",
+    "Knapp daneben! Da war wohl zu viel Bärwurz im Spiel...",
+    "Mööp! Falsch. Dein Gehirn scheint schon im Kater-Modus zu sein!",
+    "Leider falsch! Da hilft auch kein Aspirin mehr...",
+    "Nicht ganz! Erinnerst du dich denn an gar nichts mehr nach dem dritten Bier?"
+  ];
+
+  const rightQuotes = [
+    "Korrekt! Du hast das noch voll im Blut!",
+    "Richtig! Ein echtes Chemiker-Gedächtnis!",
+    "Perfekt! Du bist bereit für die nächste Frage!"
+  ];
 
   function showQuestion(qNum) {
     document.querySelectorAll('.q-container').forEach(c => c.classList.remove('active'));
@@ -563,11 +578,14 @@
     
     if (isCorrect) {
       playSound('success');
+      document.getElementById('q' + questionNumber).classList.remove('active');
       currentQ++;
       if (document.getElementById('q' + currentQ)) {
-        showQuestion(currentQ);
+        let randomQuote = rightQuotes[Math.floor(Math.random() * rightQuotes.length)];
+        typeWriter(randomQuote, 'lab-text', 40, () => {
+          setTimeout(() => showQuestion(currentQ), 500);
+        });
       } else {
-        document.getElementById('q' + questionNumber).classList.remove('active');
         typeWriter("🌟 Perfekte Mischung! Aber ab 30 braucht man mehr als nur Tränke... Beweise deine Reflexe und sammle wichtige Gegenstände für das Alter ein! (10 Items in 15 Sekunden)", 'lab-text', 40, () => {
           setTimeout(() => {
             nextStep(1, '1-5');
@@ -579,7 +597,8 @@
       }
     } else {
       playSound('error');
-      typeWriter("FALSCH! Die Mischung blubbert gefährlich...", 'lab-text', 40);
+      let randomQuote = wrongQuotes[Math.floor(Math.random() * wrongQuotes.length)];
+      typeWriter(randomQuote, 'lab-text', 40);
     }
   }
 
@@ -1093,6 +1112,7 @@
 
   function confirmQuest() {
     closeQuestModal();
+    localStorage.setItem('gameCompleted', 'true');
     selectQuest(selectedQuest);
   }
 
@@ -1144,7 +1164,7 @@
     <button class="btn" onclick="startQuest()" style="font-size: 1.2em; padding: 20px;">▶ START</button>
     
     <!-- Debug Shortcuts -->
-    <div style="margin-top: 40px; border: 2px dashed #FFF; padding: 10px;">
+    <div id="debug-shortcuts" style="display: none; margin-top: 40px; border: 2px dashed #FFF; padding: 10px;">
       <p style="font-size: 0.7em; margin-bottom: 10px; color: #FFF; text-shadow:none;">DEBUG SHORTCUTS:</p>
       <div style="display: flex; gap: 5px; justify-content: center;">
         <button class="btn" style="font-size: 0.6em; padding: 8px;" onclick="debugJump('moorhuhn')">Moorhuhn</button>
@@ -1167,9 +1187,9 @@
     <div style="background: rgba(0,0,0,0.8); padding: 15px; border: 4px solid #0F0; border-radius: 8px;">
       <div id="q1" class="q-container">
         <h3 id="q1-text" style="text-transform:none;"></h3>
-        <button class="btn ans-btn" onclick="answerQ(1, false)">A) Spüli</button>
-        <button class="btn ans-btn" onclick="answerQ(1, true)">B) Natronlauge</button>
-        <button class="btn ans-btn" onclick="answerQ(1, false)">C) Essig</button>
+        <button class="btn ans-btn" onclick="answerQ(1, false)">A) Bärwurz</button>
+        <button class="btn ans-btn" onclick="answerQ(1, true)">B) Grappa</button>
+        <button class="btn ans-btn" onclick="answerQ(1, false)">C) Ramazzotti</button>
       </div>
       <div id="q2" class="q-container">
         <h3 id="q2-text" style="text-transform:none;"></h3>
@@ -1179,9 +1199,9 @@
       </div>
       <div id="q3" class="q-container">
         <h3 id="q3-text" style="text-transform:none;"></h3>
-        <button class="btn ans-btn" onclick="answerQ(3, false)">A) Mehr Bier</button>
-        <button class="btn ans-btn" onclick="answerQ(3, false)">B) Aspirin</button>
-        <button class="btn ans-btn" onclick="answerQ(3, true)">C) Weißwurstfrühstück</button>
+        <button class="btn ans-btn" onclick="answerQ(3, true)">A) Bibione</button>
+        <button class="btn ans-btn" onclick="answerQ(3, false)">B) Krk</button>
+        <button class="btn ans-btn" onclick="answerQ(3, false)">C) Mallorca</button>
       </div>
     </div>
   </div>
@@ -1286,5 +1306,13 @@
   </div>
 
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('gameCompleted') === 'true') {
+      let debugMenu = document.getElementById('debug-shortcuts');
+      if (debugMenu) debugMenu.style.display = 'block';
+    }
+  });
+</script>
 </body>
 </html>
